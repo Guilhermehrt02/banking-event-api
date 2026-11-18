@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: banking-event-api
+
+  # Aponta para o Postgres do docker-compose.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banking
+    username: banking
+    password: banking
+
+  jpa:
+    open-in-view: false        # não manter sessão JPA aberta durante a resposta HTTP
+    hibernate:
+      ddl-auto: validate       # o schema é responsabilidade do Flyway, nunca do Hibernate
+
+  flyway:
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always     # mostra o status do "db" no /actuator/health (só dev)
