@@ -1,8 +1,9 @@
 # Infraestrutura local de desenvolvimento.
-# Subir:    docker compose up -d
-# Status:   docker compose ps        (ambos devem ficar "healthy")
-# Derrubar: docker compose down      (mantém os dados do Postgres)
-#           docker compose down -v   (APAGA os volumes)
+# Subir só o Postgres (padrão):  docker compose up -d
+# Subir Postgres + Kafka:        docker compose --profile kafka up -d
+# Status:   docker compose ps        (serviços devem ficar "healthy")
+# Derrubar: docker compose --profile kafka down   (sem o --profile, o Kafka não é derrubado)
+#           acrescente -v para APAGAR os volumes
 
 services:
 
@@ -25,7 +26,9 @@ services:
       retries: 10
 
   # Log de eventos: um único nó em KRaft fazendo papel de broker E controller.
+  # Opcional até a Fase 5 (ver ROADMAP): só sobe com --profile kafka.
   kafka:
+    profiles: ["kafka"]
     image: apache/kafka:4.3.2
     container_name: banking-kafka
     ports:

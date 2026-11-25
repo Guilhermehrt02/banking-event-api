@@ -45,3 +45,12 @@ Usar `apache/kafka:4.3.2` em **KRaft**, com **um único nó** exercendo `broker`
   (ex.: outbox marcado como enviado sem a mensagem existir no Kafka). Revisitar nas Fases 5–7.
 - ⚠️ `advertised.listeners` precisa refletir o ponto de vista de cada cliente; erro aqui causa
   "conecta no bootstrap e depois dá timeout".
+
+## Atualização — 2026-11-25
+O ROADMAP foi refocado no onboarding em pagamentos: as fases com Kafka (5 a 10) passaram a ser
+opcionais, depois de 11/01/2027. A decisão acima continua válida, mas o serviço `kafka` agora está
+atrás do **profile** `kafka` no `docker-compose.yml`:
+- `docker compose up -d` → só Postgres (economiza RAM e tempo de startup nas fases 1 a P2);
+- `docker compose --profile kafka up -d` → Postgres + Kafka.
+- Atenção: `docker compose down` sem `--profile kafka` **não** derruba o Kafka (comportamento
+  confirmado no Compose v5.7.0).
