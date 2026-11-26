@@ -38,4 +38,14 @@ class MoneyTest {
     void mesmoValorEmMoedasDiferentesNaoEhIgual() {
         assertNotEquals(Money.of("10.00", "BRL"), Money.of("10.00", "USD"));
     }
+
+    @Test
+    void rejeitaValorNegativo() {
+        assertThrows(IllegalArgumentException.class, () -> Money.of("-10.00", "USD"));
+    }
+
+    @Test
+    void rejeitaArredondamentoDoValorComMaisCasasDecimais() {
+        assertThrows(IllegalArgumentException.class, () -> Money.of("10.005", "USD"));
+    }
 }
