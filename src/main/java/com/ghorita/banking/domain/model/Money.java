@@ -56,4 +56,17 @@ public record Money(BigDecimal amount, Currency currency) {
     public static Money of(String amount, String currencyCode) {
         return new Money(new BigDecimal(amount), Currency.getInstance(currencyCode));
     }
+
+    // TODO(human): implementar plus e minus (os dois métodos abaixo).
+    // Ambos devolvem um Money NOVO (imutabilidade) e só operam na mesma moeda.
+
+    /** Soma este valor com {@code other}. Ex.: 10.50 BRL + 0.75 BRL = 11.25 BRL. */
+    public Money plus(Money other) {
+        throw new UnsupportedOperationException("não implementado");
+    }
+
+    /** Subtrai {@code other} deste valor. Resultado negativo é inválido (invariante do construtor). */
+    public Money minus(Money other) {
+        throw new UnsupportedOperationException("não implementado");
+    }
 }

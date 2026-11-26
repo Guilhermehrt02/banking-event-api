@@ -48,4 +48,59 @@ class MoneyTest {
     void rejeitaArredondamentoDoValorComMaisCasasDecimais() {
         assertThrows(IllegalArgumentException.class, () -> Money.of("10.005", "USD"));
     }
+
+    // --- Operações (passo 2a) ---
+
+    @Test
+    void somaValoresDaMesmaMoeda() {
+        assertEquals(Money.of("11.25", "BRL"), Money.of("10.50", "BRL").plus(Money.of("0.75", "BRL")));
+    }
+
+    @Test
+    void subtraiValoresDaMesmaMoeda() {
+        assertEquals(Money.of("9.75", "BRL"), Money.of("10.00", "BRL").minus(Money.of("0.25", "BRL")));
+    }
+
+    @Test
+    void subtrairTudoResultaEmZero() {
+        assertEquals(Money.of("0", "BRL"), Money.of("10.00", "BRL").minus(Money.of("10.00", "BRL")));
+    }
+
+    @Test
+    void subtracaoQueFicariaNegativaEhRejeitada() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Money.of("5.00", "BRL").minus(Money.of("10.00", "BRL")));
+    }
+
+    @Test
+    void naoSomaMoedasDiferentes() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Money.of("10.00", "BRL").plus(Money.of("10.00", "USD")));
+    }
+
+    @Test
+    void naoSubtraiMoedasDiferentes() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Money.of("10.00", "BRL").minus(Money.of("1.00", "USD")));
+    }
+
+    @Test
+    void rejeitaOperarComNulo() {
+        Money dez = Money.of("10.00", "BRL");
+
+        assertThrows(NullPointerException.class, () -> dez.plus(null));
+        assertThrows(NullPointerException.class, () -> dez.minus(null));
+    }
+
+    @Test
+    void operacoesNaoAlteramOsOperandos() {
+        Money dez = Money.of("10.00", "BRL");
+        Money um = Money.of("1.00", "BRL");
+
+        dez.plus(um);
+        dez.minus(um);
+
+        assertEquals(Money.of("10.00", "BRL"), dez);
+        assertEquals(Money.of("1.00", "BRL"), um);
+    }
 }
