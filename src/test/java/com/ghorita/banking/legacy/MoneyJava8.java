@@ -54,13 +54,20 @@ public final class MoneyJava8 { // final: impede subclasses que quebrariam a sim
 
     @Override
     public boolean equals(Object o) {
-        // TODO(human): implementar equals e hashCode (este método e o de baixo).
-        return super.equals(o);
+        boolean hasSameCurrency = false;
+        boolean hasSameAmount = false;
+
+        if (o instanceof MoneyJava8) {
+            MoneyJava8 money = (MoneyJava8) o;
+            hasSameCurrency = Objects.equals(amount, money.amount);
+            hasSameAmount = Objects.equals(currency, money.currency);
+        }
+        return hasSameCurrency && hasSameAmount;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return  Objects.hash(amount, currency);
     }
 
     @Override
