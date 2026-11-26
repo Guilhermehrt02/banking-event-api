@@ -54,20 +54,17 @@ public final class MoneyJava8 { // final: impede subclasses que quebrariam a sim
 
     @Override
     public boolean equals(Object o) {
-        boolean hasSameCurrency = false;
-        boolean hasSameAmount = false;
-
-        if (o instanceof MoneyJava8) {
-            MoneyJava8 money = (MoneyJava8) o;
-            hasSameCurrency = Objects.equals(amount, money.amount);
-            hasSameAmount = Objects.equals(currency, money.currency);
-        }
-        return hasSameCurrency && hasSameAmount;
+        if (this == o) return true;                    // atalho: mesmo objeto
+        if (!(o instanceof MoneyJava8)) return false;   // tipo errado ou null
+        MoneyJava8 other = (MoneyJava8) o;              // Java 16+: o instanceof MoneyJava8 other
+        // equals (e não compareTo) é seguro: o construtor já normalizou a escala.
+        // Campos nunca são null (invariante do construtor), então não precisa de Objects.equals.
+        return amount.equals(other.amount) && currency.equals(other.currency);
     }
 
     @Override
     public int hashCode() {
-        return  Objects.hash(amount, currency);
+        return Objects.hash(amount, currency);          // mesmos campos do equals
     }
 
     @Override
