@@ -1,6 +1,7 @@
 package com.ghorita.banking.domain.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 
 /**
@@ -25,6 +26,17 @@ public record Money(BigDecimal amount, Currency currency) {
      */
     public Money {
         // TODO(human): garantir as invariantes do Money.
+        if(amount == null) {
+            throw new NullPointerException("Amount cannot be null");
+        }
+        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+        if(currency == null) {
+            throw new NullPointerException("Currency cannot be null");
+        }
+
+        amount = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
     }
 
     /**
