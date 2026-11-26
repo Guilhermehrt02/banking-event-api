@@ -3,6 +3,7 @@ package com.ghorita.banking.domain.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Currency;
+import java.util.Objects;
 
 /**
  * Value object que representa uma quantia em uma moeda.
@@ -25,18 +26,25 @@ public record Money(BigDecimal amount, Currency currency) {
      * O que você fizer com os parâmetros {@code amount} e {@code currency} aqui é o que fica guardado.
      */
     public Money {
-        // TODO(human): garantir as invariantes do Money.
-        if(amount == null) {
-            throw new NullPointerException("Amount cannot be null");
-        }
-        if(amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
-        }
-        if(currency == null) {
-            throw new NullPointerException("Currency cannot be null");
+        Objects.requireNonNull(amount, "Amount cannot be null");
+        Objects.requireNonNull(currency, "Currency cannot be null");
+
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative: " + amount.toPlainString());
         }
 
-        amount = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
+        // Atenção: para pseudo-moedas (XAU, XXX...) getDefaultFractionDigits() retorna -1,
+        // e setScale(-1) arredondaria para dezenas. Não usamos essas moedas no projeto.
+        int fractionDigits = currency.getDefaultFractionDigits();
+        try {
+            // UNNECESSARY: rejeita em vez de arredondar em silêncio (10.005 BRL não é válido).
+            amount = amount.setScale(fractionDigits, RoundingMode.UNNECESSARY);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException(
+                    "Amount " + amount.toPlainString() + " has more decimal places than "
+                            + currency.getCurrencyCode() + " allows (" + fractionDigits + ")",
+                    e);
+        }
     }
 
     /**
