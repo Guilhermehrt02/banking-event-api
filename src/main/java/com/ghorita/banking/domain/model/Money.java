@@ -57,16 +57,37 @@ public record Money(BigDecimal amount, Currency currency) {
         return new Money(new BigDecimal(amount), Currency.getInstance(currencyCode));
     }
 
-    // TODO(human): implementar plus e minus (os dois métodos abaixo).
-    // Ambos devolvem um Money NOVO (imutabilidade) e só operam na mesma moeda.
-
     /** Soma este valor com {@code other}. Ex.: 10.50 BRL + 0.75 BRL = 11.25 BRL. */
     public Money plus(Money other) {
-        throw new UnsupportedOperationException("não implementado");
+        requireSameCurrency(other, "add");
+        return new Money(amount.add(other.amount), currency);
     }
 
     /** Subtrai {@code other} deste valor. Resultado negativo é inválido (invariante do construtor). */
     public Money minus(Money other) {
-        throw new UnsupportedOperationException("não implementado");
+        requireSameCurrency(other, "subtract");
+        return new Money(amount.subtract(other.amount), currency);
+    }
+
+    /**
+     * {@code true} se este valor for menor que {@code other}. Usa {@code compareTo}, não {@code equals}:
+     * compara só o valor numérico (aqui a escala já é igual, mas é o hábito certo com BigDecimal).
+     */
+    public boolean isLessThan(Money other) {
+        requireSameCurrency(other, "compare");
+        return amount.compareTo(other.amount) < 0;
+    }
+
+    /**
+     * Regra única para toda operação entre dois {@code Money}: o outro não pode ser nulo e precisa
+     * estar na mesma moeda. Não existe conversão implícita (câmbio é uma regra de negócio à parte).
+     */
+    private void requireSameCurrency(Money other, String operation) {
+        Objects.requireNonNull(other, "Money to " + operation + " cannot be null");
+        if (!currency.equals(other.currency)) {
+            throw new IllegalArgumentException(
+                    "Cannot " + operation + " " + other.currency.getCurrencyCode()
+                            + " to/from " + currency.getCurrencyCode());
+        }
     }
 }

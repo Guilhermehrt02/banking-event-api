@@ -1,8 +1,10 @@
 package com.ghorita.banking.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -102,5 +104,18 @@ class MoneyTest {
 
         assertEquals(Money.of("10.00", "BRL"), dez);
         assertEquals(Money.of("1.00", "BRL"), um);
+    }
+
+    @Test
+    void comparaValoresDaMesmaMoeda() {
+        assertTrue(Money.of("9.99", "BRL").isLessThan(Money.of("10.00", "BRL")));
+        assertFalse(Money.of("10", "BRL").isLessThan(Money.of("10.00", "BRL")));
+        assertFalse(Money.of("10.01", "BRL").isLessThan(Money.of("10.00", "BRL")));
+    }
+
+    @Test
+    void naoComparaMoedasDiferentes() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Money.of("1.00", "BRL").isLessThan(Money.of("1.00", "USD")));
     }
 }
